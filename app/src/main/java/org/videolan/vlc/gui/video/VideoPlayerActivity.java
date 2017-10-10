@@ -1712,12 +1712,14 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
                 Log.d(TAG,"onMediaPlayerEvent.....MediaPlayer.Event.Vout");
                 updateNavStatus();
                 if (mMenuIdx == -1) {
-                    mUri = mService.getCurrentMediaWrapper().getUri();
-                    Log.d(TAG, "mUri........" + mUri);
-                    if (mUri.toString().equals("rtsp://192.168.1.106:8086"))
+                    if (mService.getCurrentMediaWrapper() != null)
+                        mUri = mService.getCurrentMediaWrapper().getUri();
+                    if ((mUri != null) && mUri.toString().equals("rtsp://192.168.1.106:8086")) {
                         handleVout1(event.getVoutCount());
-                    else
+                    }
+                    else {
                         handleVout(event.getVoutCount());
+                    }
                 }
                 break;
             case MediaPlayer.Event.ESAdded:
