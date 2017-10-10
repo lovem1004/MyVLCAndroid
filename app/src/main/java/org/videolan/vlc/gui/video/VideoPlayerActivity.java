@@ -175,7 +175,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
     private MediaRouter.SimpleCallback mMediaRouterCallback;
     private SecondaryDisplay mPresentation;
     private int mPresentationDisplayId = -1;
-    private Uri mUri;
+    private Uri mUri = null;
     private boolean mAskResume = true;
     private GestureDetectorCompat mDetector = null;
 
@@ -1774,12 +1774,15 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
                     fadeOutInfo();
                     break;
                 case START_PLAYBACK:
-                    mUri = mService.getCurrentMediaWrapper().getUri();
+                    if (mService.getCurrentMediaWrapper() != null)
+                        mUri = mService.getCurrentMediaWrapper().getUri();
                     Log.d(TAG,"mUri........" + mUri);
-                    if (mUri.toString().equals("rtsp://192.168.1.106:8086"))
+                    if ((mUri != null) && mUri.toString().equals("rtsp://192.168.1.106:8086")) {
                         startPlayback1();
-                    else
+                    }
+                    else {
                         startPlayback();
+                    }
                     break;
                 case AUDIO_SERVICE_CONNECTION_FAILED:
                     exit(RESULT_CONNECTION_FAILED);
