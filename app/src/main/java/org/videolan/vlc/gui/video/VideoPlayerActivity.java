@@ -1712,9 +1712,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
                 Log.d(TAG,"onMediaPlayerEvent.....MediaPlayer.Event.Vout");
                 updateNavStatus();
                 if (mMenuIdx == -1) {
-                    if (mService.getCurrentMediaWrapper() != null)
-                        mUri = mService.getCurrentMediaWrapper().getUri();
-                    if ((mUri != null) && mUri.toString().equals("rtsp://192.168.1.106:8086")) {
+                    if (MediaUtils.isSecondVedio) {
                         handleVout1(event.getVoutCount());
                     }
                     else {
@@ -1739,7 +1737,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
                 updatePausable(event.getPausable());
                 break;
             case MediaPlayer.Event.Buffering:
-                Log.d(TAG,"onMediaPlayerEvent.....MediaPlayer.Event.Buffering");
+                //Log.d(TAG,"onMediaPlayerEvent.....MediaPlayer.Event.Buffering");
                 if (!mIsPlaying)
                     break;
                 if (event.getBuffering() == 100f)
@@ -1776,10 +1774,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
                     fadeOutInfo();
                     break;
                 case START_PLAYBACK:
-                    if (mService.getCurrentMediaWrapper() != null)
-                        mUri = mService.getCurrentMediaWrapper().getUri();
-                    Log.d(TAG,"mUri........" + mUri);
-                    if ((mUri != null) && mUri.toString().equals("rtsp://192.168.1.106:8086")) {
+                    Log.d(TAG,"isSecondVedio......." + MediaUtils.isSecondVedio);
+                    if (MediaUtils.isSecondVedio) {
                         startPlayback1();
                     }
                     else {
@@ -1816,6 +1812,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
     private void onPlaying() {
         Log.i(TAG, "onPlaying........");
         mIsPlaying = true;
+        MediaUtils.isSecondVedio = true;
+        Log.d(TAG,"MediaUtils.isSecondVedio...." + MediaUtils.isSecondVedio);
         stopLoading();
         updateOverlayPausePlay();
         updateNavStatus();

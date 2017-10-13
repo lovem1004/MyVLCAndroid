@@ -28,6 +28,7 @@ import java.util.List;
 public class MediaUtils {
     public static final String ACTION_SCAN_START = Strings.buildPkgString("gui.ScanStart");
     public static final String ACTION_SCAN_STOP = Strings.buildPkgString("gui.ScanStop");
+    public static boolean isSecondVedio = false;
 
     private static SubtitlesDownloader sSubtitlesDownloader;
 

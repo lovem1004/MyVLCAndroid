@@ -1361,6 +1361,8 @@ public class PlaybackService extends Service implements IVLCVout.Callback {
             mMediaSession = null;
         }
         removePopup();
+        MediaUtils.isSecondVedio = false;
+        Log.d(TAG,"MediaUtils.isSecordVedio...." + MediaUtils.isSecondVedio);
         if (mMediaPlayer == null)
             return;
         savePosition();
@@ -2091,9 +2093,8 @@ public class PlaybackService extends Service implements IVLCVout.Callback {
             }
             mediaList.add(mediaWrapper);
         }
-        Log.d(TAG,"location........" + location);
-        Log.d(TAG,"true or false........" + location.equals("rtsp://192.168.1.106:8086"));
-        if(location.equals("rtsp://192.168.1.106:8086"))
+        Log.d(TAG,"MediaUtils.isSecordVedio........" + MediaUtils.isSecondVedio);
+        if(MediaUtils.isSecondVedio)
             load1(mediaList, position);
         else
             load(mediaList, position);
@@ -2193,6 +2194,13 @@ public class PlaybackService extends Service implements IVLCVout.Callback {
         ArrayList<MediaWrapper> arrayList = new ArrayList<MediaWrapper>();
         arrayList.add(media);
         load(arrayList, 0);
+    }
+
+    public void load1(MediaWrapper media) {
+        Log.d(TAG,"load1234.......");
+        ArrayList<MediaWrapper> arrayList = new ArrayList<MediaWrapper>();
+        arrayList.add(media);
+        load1(arrayList, 0);
     }
 
     /**
