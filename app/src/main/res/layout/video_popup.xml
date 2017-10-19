@@ -10,7 +10,7 @@
         android:layout_height="match_parent" />
 
     <SurfaceView
-        android:id="@+id/surfaceView2"
+        android:id="@+id/player_surface_second"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

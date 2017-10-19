@@ -264,6 +264,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
     private int mOverlayTimeout = 0;
     private boolean mLockBackButton = false;
     boolean mWasPaused = false;
+    boolean mWasPaused1 = false;
 
     /**
      * For uninterrupted switching between audio and video mode
@@ -609,8 +610,14 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
         mSize.setOnClickListener(null);
 
         /* Stop the earliest possible to avoid vout error */
-        if (isFinishing() || (AndroidDevices.isAndroidTv() && !requestVisibleBehind(true)))
-            stopPlayback();
+        if (isFinishing() || (AndroidDevices.isAndroidTv() && !requestVisibleBehind(true))){
+            Log.d(TAG," MediaUtils.isSecondPopup......" + MediaUtils.isSecondPopup);
+            if (MediaUtils.isSecondPopup % 2 == 1) {
+                stopPlayback1();
+            } else {
+                stopPlayback();
+            }
+        }
     }
 
     @Override
@@ -677,7 +684,12 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
                 mSettings.getBoolean(PreferencesActivity.VIDEO_BACKGROUND, false)) {
             switchToAudioMode(false);
         }
-        stopPlayback();
+        Log.d(TAG," MediaUtils.isSecondVedioflag......" + MediaUtils.isSecondVedioflag + " MediaUtils.isSecondPopup......" + MediaUtils.isSecondPopup);
+        if (MediaUtils.isSecondVedioflag % 2 == 1 && MediaUtils.isSecondPopup % 2 == 1) {
+            stopPlayback1();
+        } else {
+            stopPlayback();
+        }
 
         restoreBrightness();
 
@@ -725,6 +737,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
             mPresentation = null;
         }
 
+        MediaUtils.isSecondVedioflag = 0;
+        Log.d(TAG,"MediaUtils.isSecondVedioflag......." + MediaUtils.isSecondVedioflag);
         mAudioManager = null;
     }
 
@@ -814,7 +828,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
         mPlaybackStarted = true;
 
         final IVLCVout vlcVout = mService.getVLCVout1();
-        if (vlcVout.areViewsAttached() && mService.isPlayingPopup())
+        if (vlcVout.areViewsAttached() && mService.isPlayingPopup1())
             mService.stopPlayback1();
         vlcVout.detachViews();
         if (mPresentation == null) {
@@ -980,8 +994,9 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
 
         if(mSwitchingView && mService != null) {
             Log.d(TAG, "mLocation = \"" + mUri + "\"");
-            if (mSwitchToPopup)
+            if (mSwitchToPopup) {
                 mService.switchToPopup(mService.getCurrentMediaPosition());
+            }
             else
                 mService.showWithoutParse(mService.getCurrentMediaPosition());
             return;
@@ -1031,7 +1046,86 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
             if (ratePref)
                 editor.putFloat(PreferencesActivity.VIDEO_RATE, mService.getRate());
             mService.setRate(1.0f, false);
+            Log.d(TAG,"wdf.....stop...");
             mService.stop();
+        }
+        Util.commitPreferences(editor);
+    }
+
+    private void stopPlayback1() {
+        Log.d(TAG,"stopPlayback1.........");
+        if (!mPlaybackStarted)
+            return;
+
+        mWasPaused1 = !mService.isPlaying1();
+
+        if (mMute)
+            mute(false);
+
+        mPlaybackStarted = false;
+
+        mService.setVideoTrackEnabled1(false);
+        mService.removeCallback(this);
+
+        final IVLCVout vlcVout1 = mService.getVLCVout1();
+        vlcVout1.removeCallback(this);
+        vlcVout1.detachViews();
+
+        if(mSwitchingView && mService != null) {
+            Log.d(TAG, "mLocation = \"" + mUri + "\"");
+            if (mSwitchToPopup) {
+                    mService.switchToPopup1(mService.getCurrentMediaPosition1());
+            }
+            else
+                mService.showWithoutParse1(mService.getCurrentMediaPosition1());
+            return;
+        }
+        if (!mWasPaused1)
+            mService.pause1();
+
+        cleanUI();
+
+        long time = getTime();
+        long length = mService.getLength1();
+        //remove saved position if in the last 5 seconds
+        if (length - time < 5000)
+            time = 0;
+        else
+            time -= 2000; // go back 2 seconds, to compensate loading time
+
+        SharedPreferences.Editor editor = mSettings.edit();
+        // Save position
+        if (mService.isSeekable1()) {
+            if(MediaDatabase.getInstance().mediaItemExists(mUri)) {
+                MediaDatabase.getInstance().updateMedia(
+                        mUri,
+                        MediaDatabase.INDEX_MEDIA_TIME,
+                        time);
+            } else {
+                // Video file not in media library, store time just for onResume()
+                editor.putLong(PreferencesActivity.VIDEO_RESUME_TIME, time);
+            }
+        }
+
+        if (isFinishing()) {
+            // Save selected subtitles
+            String subtitleList_serialized = null;
+            if(mSubtitleSelectedFiles.size() > 0) {
+                Log.d(TAG, "Saving selected subtitle files");
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                try {
+                    ObjectOutputStream oos = new ObjectOutputStream(bos);
+                    oos.writeObject(mSubtitleSelectedFiles);
+                    subtitleList_serialized = bos.toString();
+                } catch(IOException e) {}
+            }
+            editor.putString(PreferencesActivity.VIDEO_SUBTITLE_FILES, subtitleList_serialized);
+
+            boolean ratePref = mSettings.getBoolean(PreferencesActivity.KEY_AUDIO_PLAYBACK_SPEED_PERSIST, true);
+            if (ratePref)
+                editor.putFloat(PreferencesActivity.VIDEO_RATE, mService.getRate1());
+            mService.setRate1(1.0f, false);
+            mService.stop1();
         }
         Util.commitPreferences(editor);
     }
@@ -1158,6 +1252,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
             resultIntent.putExtra(EXTRA_DURATION, mService.getLength());
         }
         setResult(resultCode, resultIntent);
+        MediaUtils.isSecondVedioflag = 0;
+        Log.d(TAG,"MediaUtils.isSecondVedioflag......." + MediaUtils.isSecondVedioflag);
         finish();
     }
 
@@ -1699,6 +1795,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
                 /* Don't end the activity if the media has subitems since the next child will be
                  * loaded by the PlaybackService */
                 Log.d(TAG,"onMediaPlayerEvent.....MediaPlayer.Event.EndReached");
+                Log.d(TAG,"mHasSubItems......" + mHasSubItems + "MediaUtils.isSecondVedioflag...." + MediaUtils.isSecondVedioflag);
                 if (!mHasSubItems)
                     endReached();
                 break;
@@ -1712,7 +1809,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
                 Log.d(TAG,"onMediaPlayerEvent.....MediaPlayer.Event.Vout");
                 updateNavStatus();
                 if (mMenuIdx == -1) {
-                    if (MediaUtils.isSecondVedio) {
+                    Log.d(TAG," MediaUtils.isSecondPopup......" + MediaUtils.isSecondPopup);
+                    if (MediaUtils.isSecondPopup % 2 == 1) {
                         handleVout1(event.getVoutCount());
                     }
                     else {
@@ -1758,7 +1856,6 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
             if (mService == null)
                 return true;
 
-            Log.d(TAG,"msg.what........." + msg.what);
             switch (msg.what) {
                 case FADE_OUT:
                     hideOverlay(false);
@@ -1774,11 +1871,10 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
                     fadeOutInfo();
                     break;
                 case START_PLAYBACK:
-                    Log.d(TAG,"isSecondVedio......." + MediaUtils.isSecondVedio);
-                    if (MediaUtils.isSecondVedio) {
+                    Log.d(TAG,"MediaUtils.isSecondPopup......" + MediaUtils.isSecondPopup);
+                    if (MediaUtils.isSecondPopup % 2 == 1) {
                         startPlayback1();
-                    }
-                    else {
+                    } else {
                         startPlayback();
                     }
                     break;
@@ -1812,11 +1908,10 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
     private void onPlaying() {
         Log.i(TAG, "onPlaying........");
         mIsPlaying = true;
-        MediaUtils.isSecondVedio = true;
-        Log.d(TAG,"MediaUtils.isSecondVedio...." + MediaUtils.isSecondVedio);
         stopLoading();
         updateOverlayPausePlay();
         updateNavStatus();
+        MediaUtils.isSecondVedioflag++;
         if (!mService.getCurrentMediaWrapper().hasFlag(MediaWrapper.MEDIA_PAUSED))
             mHandler.sendEmptyMessageDelayed(FADE_OUT, OVERLAY_TIMEOUT);
         setESTracks();
@@ -1830,6 +1925,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
             seek(0);
             return;
         }
+        Log.d(TAG,"mService.expand()...." + mService.expand());
         if(mService.expand() == 0) {
             mHandler.removeMessages(LOADING_ANIMATION);
             mHandler.sendEmptyMessageDelayed(LOADING_ANIMATION, LOADING_ANIMATION_DELAY);
@@ -1883,6 +1979,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
         int position = mService.getCurrentMediaPosition();
         List<MediaWrapper> list = new ArrayList<>(mService.getMedias());
         final MediaWrapper mw = list.get(position);
+        Log.d(TAG,"handleHardwareAccelerationError......");
         mService.stop();
         if(!isFinishing()) {
             if (wasPaused)
@@ -3206,6 +3303,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
         if (mUri != null) {
             if (mService.hasMedia() && !mUri.equals(mService.getCurrentMediaWrapper().getUri()))
                 mService.stop();
+            Log.d(TAG,"loadmedia....stop.....");
             // restore last position
             MediaWrapper media = MediaDatabase.getInstance().getMedia(mUri);
             if (media == null && TextUtils.equals(mUri.getScheme(), "file") &&
@@ -3330,8 +3428,8 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
          */
         final KeyguardManager km = (KeyguardManager) VLCApplication.getAppContext().getSystemService(KEYGUARD_SERVICE);
         if (km.inKeyguardRestrictedInputMode())
-            mWasPaused = true;
-        if (mWasPaused)
+            mWasPaused1 = true;
+        if (mWasPaused1)
             Log.d(TAG, "Video was previously paused, resuming in paused mode");
 
         if (intent.getData() != null)
@@ -3349,10 +3447,10 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
         if (intent.hasExtra(PLAY_EXTRA_ITEM_TITLE))
             itemTitle = extras.getString(PLAY_EXTRA_ITEM_TITLE);
 
-        if (positionInPlaylist != -1 && mService.hasMedia()) {
+        if (positionInPlaylist != -1 && mService.hasMedia1()) {
             // Provided externally from AudioService
             Log.d(TAG, "Continuing playback from PlaybackService at index " + positionInPlaylist);
-            MediaWrapper openedMedia = mService.getMedias().get(positionInPlaylist);
+            MediaWrapper openedMedia = mService.getMedias1().get(positionInPlaylist);
             Log.d(TAG,"openedMedia....." + openedMedia);
             if (openedMedia == null) {
                 encounteredError();
@@ -3360,13 +3458,14 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
             }
             mUri = openedMedia.getUri();
             itemTitle = openedMedia.getTitle();
-            updateSeekable(mService.isSeekable());
-            updatePausable(mService.isPausable());
+            updateSeekable(mService.isSeekable1());
+            updatePausable(mService.isPausable1());
         }
 
         if (mUri != null) {
-            if (mService.hasMedia() && !mUri.equals(mService.getCurrentMediaWrapper().getUri()))
-                mService.stop();
+            if (mService.hasMedia1() && !mUri.equals(mService.getCurrentMediaWrapper1().getUri()))
+                mService.stop1();
+            Log.d(TAG,"loadmedia1...stop...");
             // restore last position
             MediaWrapper media = MediaDatabase.getInstance().getMedia(mUri);
             if (media == null && TextUtils.equals(mUri.getScheme(), "file") &&
@@ -3417,12 +3516,12 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
             // Start playback & seek
             mService.addCallback(this);
             /* prepare playback */
-            boolean hasMedia = mService.hasMedia();
+            boolean hasMedia = mService.hasMedia1();
             if (hasMedia)
-                media = mService.getCurrentMediaWrapper();
+                media = mService.getCurrentMediaWrapper1();
             else if (media == null)
                 media = new MediaWrapper(mUri);
-            if (mWasPaused)
+            if (mWasPaused1)
                 media.addFlags(MediaWrapper.MEDIA_PAUSED);
             if (mHardwareAccelerationError || intent.hasExtra(PLAY_DISABLE_HARDWARE))
                 media.addFlags(MediaWrapper.MEDIA_NO_HWACCEL);
@@ -3436,7 +3535,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
 
             // Handle playback
             if (!hasMedia)
-                mService.load(media);
+                mService.load1(media);
             else if (!mService.isPlaying1())
                 mService.playIndex1(positionInPlaylist);
             else {
@@ -3452,18 +3551,18 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
         } else {
             mService.addCallback(this);
             mService.loadLastPlaylist(PlaybackService.TYPE_VIDEO);
-            MediaWrapper mw = mService.getCurrentMediaWrapper();
+            MediaWrapper mw = mService.getCurrentMediaWrapper1();
             if (mw == null) {
                 finish();
                 return;
             }
-            mUri = mService.getCurrentMediaWrapper().getUri();
+            mUri = mService.getCurrentMediaWrapper1().getUri();
         }
         if (itemTitle != null)
             title = itemTitle;
         mTitle.setText(title);
 
-        if (mWasPaused)
+        if (mWasPaused1)
             showOverlay(true);
     }
 
@@ -3881,6 +3980,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
 
     @Override
     public void onNewLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
+        Log.d(TAG,"onNewLayout.....");
         if (width * height == 0)
             return;
 
@@ -3891,7 +3991,12 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
         mVideoVisibleHeight = visibleHeight;
         mSarNum = sarNum;
         mSarDen = sarDen;
-        changeSurfaceLayout();
+        Log.d(TAG," MediaUtils.isSecondPopup......" + MediaUtils.isSecondPopup);
+        if (MediaUtils.isSecondPopup % 2 == 1) {
+            changeSurfaceLayout1();
+        } else {
+            changeSurfaceLayout();
+        }
     }
 
     @Override

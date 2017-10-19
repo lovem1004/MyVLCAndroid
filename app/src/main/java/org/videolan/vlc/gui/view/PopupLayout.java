@@ -31,6 +31,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -105,6 +106,7 @@ public class PopupLayout extends RelativeLayout implements ScaleGestureDetector.
 
     @SuppressWarnings("deprecation")
     private void init(Context context) {
+        Log.d(TAG,"init.........");
         mWindowManager = (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
 
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
@@ -127,6 +129,7 @@ public class PopupLayout extends RelativeLayout implements ScaleGestureDetector.
     }
 
     private void updateWindowSize() {
+        Log.d(TAG,"updateWindowSize.........");
         if (AndroidUtil.isHoneycombMr2OrLater()) {
             Point size = new Point();
             mWindowManager.getDefaultDisplay().getSize(size);
@@ -170,6 +173,7 @@ public class PopupLayout extends RelativeLayout implements ScaleGestureDetector.
 
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
+        Log.d(TAG,"onScale.........");
         mScaleFactor *= detector.getScaleFactor();
 
         mScaleFactor = Math.max(0.1d, Math.min(mScaleFactor, 5.0d));
@@ -192,6 +196,7 @@ public class PopupLayout extends RelativeLayout implements ScaleGestureDetector.
     }
 
     private void containInScreen(int width, int height) {
+
         mLayoutParams.x = Math.max(mLayoutParams.x, 0);
         mLayoutParams.y = Math.max(mLayoutParams.y, 0);
         if (mLayoutParams.x + width > mScreenWidth)
