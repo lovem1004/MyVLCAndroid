@@ -58,6 +58,7 @@ import org.videolan.vlc.gui.preferences.PreferencesUi;
 import org.videolan.vlc.gui.video.VideoPlayerActivity;
 import org.videolan.vlc.gui.view.AutoFitRecyclerView;
 import org.videolan.vlc.interfaces.IPlaybackSettingsController;
+import org.videolan.vlc.media.MediaUtils;
 import org.videolan.vlc.media.MediaWrapper;
 import org.videolan.vlc.util.AndroidDevices;
 import org.videolan.vlc.util.Permissions;
@@ -65,6 +66,8 @@ import org.videolan.vlc.util.Strings;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import static org.videolan.vlc.media.MediaUtils.canSaveVedio;
 
 public class AdvOptionsDialog extends DialogFragment implements View.OnClickListener, PlaybackService.Client.Callback, View.OnFocusChangeListener, DialogInterface.OnKeyListener {
 
@@ -91,6 +94,7 @@ public class AdvOptionsDialog extends DialogFragment implements View.OnClickList
     private static final int ID_POPUP_VIDEO = 9 ;
     private static final int ID_REPEAT = 10 ;
     private static final int ID_SHUFFLE = 11 ;
+    private static final int ID_SAVE_VEDIO = 12 ;
 
     private Activity mActivity;
     private int mTheme;
@@ -498,6 +502,10 @@ public class AdvOptionsDialog extends DialogFragment implements View.OnClickList
                 mService.shuffle();
                 initShuffle();
                 break;
+            case ID_SAVE_VEDIO:
+                mToast.setText("文件已保存");
+                mToast.show();
+                break;
         }
     }
 
@@ -556,6 +564,8 @@ public class AdvOptionsDialog extends DialogFragment implements View.OnClickList
             if (!tvUi)
                 mAdapter.addOption(new Option(ID_POPUP_VIDEO, R.attr.ic_popup_dim, getString(R.string.popup_playback_title)));
             mAdapter.addOption(new Option(ID_REPEAT, R.attr.ic_repeat, getString(R.string.repeat_title)));
+            if(MediaUtils.canSaveVedio)
+            mAdapter.addOption(new Option(ID_SAVE_VEDIO, R.attr.ic_save_vedio, getString(R.string.save_vedio)));
             if (mService.canShuffle())
                 mAdapter.addOption(new Option(ID_SHUFFLE, R.attr.ic_shuffle, getString(R.string.shuffle_title)));
 

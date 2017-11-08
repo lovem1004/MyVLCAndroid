@@ -1487,6 +1487,7 @@ public class PlaybackService extends Service implements IVLCVout.Callback {
         mCurrentIndex = -1;
         mPrevious.clear();
         mHandler.removeMessages(SHOW_PROGRESS);
+        MediaUtils.canSaveVedio = false;
         hideNotification();
         broadcastMetadata();
         executeUpdate();
@@ -2616,6 +2617,7 @@ public class PlaybackService extends Service implements IVLCVout.Callback {
             }
             mediaList.add(mediaWrapper);
         }
+        MediaUtils.canSaveVedio = true;
         Log.d(TAG,"MediaUtils.isSecondPopup........" + MediaUtils.isSecondPopup);
         if(MediaUtils.isSecondPopup % 2 == 1)
             load1(mediaList, position);

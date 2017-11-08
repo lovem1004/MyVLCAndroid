@@ -30,6 +30,7 @@ public class MediaUtils {
     public static final String ACTION_SCAN_STOP = Strings.buildPkgString("gui.ScanStop");
     public static int isSecondVedioflag = 0;
     public static int isSecondPopup = 0;
+    public static boolean canSaveVedio = false;
 
     private static SubtitlesDownloader sSubtitlesDownloader;
 

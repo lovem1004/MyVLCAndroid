@@ -634,6 +634,7 @@
     <string name="popup_playback_title">Play video in a Pop-Up window</string>
     <string name="popup_playback">Playing in a Pop-Up window</string>
     <string name="popup_expand">Expand video</string>
+    <string name="save_vedio">Save video</string>
     <string name="snack_subloader_sub_found">Subtitles downloaded</string>
     <string name="snack_subloader_sub_not_found">Subtitles not found</string>
     <string name="dialog_subloader_success">Subtitles found for:</string>
