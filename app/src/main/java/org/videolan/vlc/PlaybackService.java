@@ -85,6 +85,7 @@ import org.videolan.vlc.util.WeakHandler;
 import org.videolan.vlc.widget.VLCAppWidgetProvider;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -1223,7 +1224,8 @@ public class PlaybackService extends Service implements IVLCVout.Callback {
                     final Bundle bundle = msg.getData();
                     final String text = bundle.getString("text");
                     final int duration = bundle.getInt("duration");
-                    Toast.makeText(VLCApplication.getAppContext(), text, duration).show();
+                    //Toast.makeText(VLCApplication.getAppContext(), text, duration).show();
+                    Toast.makeText(VLCApplication.getAppContext(), text, Toast.LENGTH_LONG).show();
                     break;
             }
         }
@@ -1483,6 +1485,7 @@ public class PlaybackService extends Service implements IVLCVout.Callback {
             mMediaPlayer.setMedia(null);
             media.release();
         }
+
         mMediaList.removeEventListener(mListEventListener);
         mCurrentIndex = -1;
         mPrevious.clear();
@@ -1493,6 +1496,12 @@ public class PlaybackService extends Service implements IVLCVout.Callback {
         executeUpdate();
         executeUpdateProgress();
         changeAudioFocus(false);
+
+        try {
+            Runtime.getRuntime().exec("rm " + "/sdcard/vlc_stream_to_save");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void stopPlayback1() {

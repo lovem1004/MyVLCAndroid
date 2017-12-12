@@ -64,6 +64,7 @@ import org.videolan.vlc.util.AndroidDevices;
 import org.videolan.vlc.util.Permissions;
 import org.videolan.vlc.util.Strings;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -505,6 +506,11 @@ public class AdvOptionsDialog extends DialogFragment implements View.OnClickList
             case ID_SAVE_VEDIO:
                 mToast.setText("文件已保存");
                 mToast.show();
+                try {
+                    Runtime.getRuntime().exec("touch " + "/sdcard/vlc_stream_to_save");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
