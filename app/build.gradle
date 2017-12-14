@@ -46,7 +46,6 @@ android {
             dimension "abi"
             versionCode = 4
         }
-
     }
     // make per-variant version code
     applicationVariants.all { variant ->
@@ -85,6 +84,7 @@ android {
             aidl.srcDirs = ['src/main/java']
             res.srcDirs = ['src/main/res']
             assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['libs']
         }
 //        release {
 //            manifest.srcFile 'flavors/release/AndroidManifest.xml'

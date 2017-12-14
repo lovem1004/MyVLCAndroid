@@ -464,6 +464,7 @@
 
         <service android:name=".extensions.ExtensionManagerService" />
         <service android:name=".PlaybackService" />
+        <service android:name=".jni.FFmpegJniService" />
         <receiver
             android:name=".widget.VLCAppWidgetProviderWhite"
             android:exported="false"

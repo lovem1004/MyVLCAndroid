@@ -49,6 +49,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GestureDetectorCompat;
@@ -113,6 +114,7 @@ import org.videolan.vlc.gui.preferences.PreferencesActivity;
 import org.videolan.vlc.gui.preferences.PreferencesUi;
 import org.videolan.vlc.gui.tv.audioplayer.AudioPlayerActivity;
 import org.videolan.vlc.interfaces.IPlaybackSettingsController;
+import org.videolan.vlc.jni.FFmpegJniService;
 import org.videolan.vlc.media.MediaDatabase;
 import org.videolan.vlc.media.MediaUtils;
 import org.videolan.vlc.media.MediaWrapper;
@@ -523,6 +525,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
         }
 
         resetHudLayout();
+        startService(new Intent(this, FFmpegJniService.class));
     }
 
     @Override
@@ -725,7 +728,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG,"onDestroy.........");
+        Log.d(TAG,"david1214 onDestroy.........");
         super.onDestroy();
         if (mReceiver != null)
             unregisterReceiver(mReceiver);
@@ -740,6 +743,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
         MediaUtils.isSecondVedioflag = 0;
         Log.d(TAG,"MediaUtils.isSecondVedioflag......." + MediaUtils.isSecondVedioflag);
         mAudioManager = null;
+        stopService(new Intent(this, FFmpegJniService.class));
     }
 
     /**
@@ -819,6 +823,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void startPlayback1() {
         Log.d(TAG,"startPlayback1.........");
         /* start playback only when audio service and both surfaces are ready */
