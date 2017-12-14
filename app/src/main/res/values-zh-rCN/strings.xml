@@ -191,6 +191,8 @@
     <string name="about_text">VLC for Android™ 是广受欢迎的开源媒体播放器 VLC media player 的移植版本。Android™ 版本可以读取大多数文件及网络流。</string>
     <string name="compiled_by">此版本 VLC 的编译者为:</string>
     <string name="vlc_authors">VLC 全体作者。</string>
+    <!-- IpCamera -->
+    <string name="ipcamera">IpCamera</string>
     <!-- Preferences -->
     <string name="preferences">设置</string>
     <string name="general_prefs_category">常规</string>

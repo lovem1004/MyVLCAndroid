@@ -49,6 +49,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -539,6 +540,7 @@ public class MainActivity extends AudioPlayerContainerActivity implements Filter
     @TargetApi(Build.VERSION_CODES.FROYO)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.e(TAG, "-------------------------------");
         mMenu = menu;
         /* Note: on Android 3.0+ with an action bar this method
          * is called while the view is created. This can happen
@@ -902,6 +904,8 @@ public class MainActivity extends AudioPlayerContainerActivity implements Filter
                         mDrawerLayout.closeDrawer(mNavigationView);
                         return true;
                     }
+                case R.id.nav_ipcamera:
+                    Log.e(TAG, "ipcamera been clicked");
                 default:
                 /* Slide down the audio player */
                     slideDownAudioPlayer();
@@ -950,6 +954,8 @@ public class MainActivity extends AudioPlayerContainerActivity implements Filter
                 return ID_MRL;
             case R.id.nav_network:
                 return ID_NETWORK;
+            case R.id.nav_ipcamera:
+                return ID_IPCAMERA;
             default:
                 return ID_VIDEO;
         }

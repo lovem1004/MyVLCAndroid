@@ -323,6 +323,8 @@
     <string name="tv_ui_summary">將介面更改至電視適應的主題</string>
     <string name="lockscreen_cover_title">鎖定畫面中的媒體封面</string>
     <string name="lockscreen_cover_summary">可用時，會將目前的媒體封面圖片設定為鎖定畫面桌布</string>
+    <!-- IpCamera -->
+    <string name="ipcamera">IpCamera</string>
     <!--Accessibility-->
     <string name="more_actions">更多動作</string>
     <string name="move">移動</string>

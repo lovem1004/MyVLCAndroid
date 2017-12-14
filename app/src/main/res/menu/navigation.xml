@@ -34,6 +34,11 @@
         android:id="@+id/nav_history"
         android:title="@string/history"
         android:icon="@drawable/ic_menu_history" />
+
+    <item
+        android:id="@+id/nav_ipcamera"
+        android:title="@string/ipcamera"
+        android:icon="@drawable/ic_menu_ipcamera" />
     </group>
     <group android:id="@+id/fixed_group"
         android:checkableBehavior="single"
