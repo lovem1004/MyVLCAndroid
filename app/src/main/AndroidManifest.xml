@@ -534,6 +534,12 @@
             android:theme="@style/Theme.Leanback" />
         <activity android:name=".gui.tv.LicenceActivity"
             android:theme="@style/Theme.Leanback" />
+        <activity
+            android:name="org.videolan.vlc.hk.DemoActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.VLC.Player" />
 
         <service
             android:name=".RecommendationsService"

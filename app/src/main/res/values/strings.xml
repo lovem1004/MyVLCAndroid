@@ -653,6 +653,14 @@
     <string name="listen">Listen</string>
     <string name="subtitles_download_title">Subs download</string>
     <string name="connecting">Connecting...</string>
+    <string name="ip">IP:</string>
+    <string name="port">Port:</string>
+    <string name="user">User:</string>
+    <string name="psd">Psd:</string>
+    <string name="Login">Login</string>
+    <string name="preview">Preview</string>
+    <string name="record">Record</string>
+    <string name="logout">Logout</string>
 
     <string-array name="chroma_formats" translatable="false">
         <item>RGB 32-bit</item>

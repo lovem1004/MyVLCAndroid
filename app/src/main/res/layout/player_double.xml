@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/Play"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <RelativeLayout
+            android:id="@+id/widget_Play"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <SurfaceView
+                android:id="@+id/Sur_Player"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:background="#0000ff00" />
+
+            <TextView
+                android:id="@+id/TV_IP"
+                android:layout_width="50dip"
+                android:layout_height="40dip"
+                android:layout_marginTop="150dp"
+                android:gravity="center"
+                android:text="@string/ip"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/EDT_IPAddr"
+                android:layout_width="150dip"
+                android:layout_height="40dip"
+                android:layout_marginTop="150dp"
+                android:gravity="center"
+                android:layout_toRightOf="@+id/TV_IP"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/TV_Port"
+                android:layout_width="50dip"
+                android:layout_height="40dip"
+                android:layout_marginTop="150dp"
+                android:layout_toRightOf="@+id/EDT_IPAddr"
+                android:gravity="center"
+                android:text="@string/port"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/EDT_Port"
+                android:layout_width="80dip"
+                android:layout_height="40dip"
+                android:layout_marginTop="150dp"
+                android:layout_toRightOf="@+id/TV_Port"
+                android:gravity="center"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/TV_User"
+                android:layout_width="60dip"
+                android:layout_height="40dip"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/TV_IP"
+                android:gravity="center"
+                android:text="@string/user"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/EDT_User"
+                android:layout_width="120dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_IP"
+                android:layout_toRightOf="@+id/TV_User"
+                android:gravity="center"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/TV_Psd"
+                android:layout_width="50dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_IP"
+                android:layout_toRightOf="@+id/EDT_User"
+                android:gravity="center"
+                android:text="@string/psd"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/EDT_Psd"
+                android:layout_width="120dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_IP"
+                android:layout_toRightOf="@+id/TV_Psd"
+                android:inputType="textPassword"
+                android:gravity="center"
+                android:text="" />
+
+            <Button
+                android:id="@+id/btn_Login"
+                android:layout_width="80dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_User"
+                android:text="@string/Login"
+                android:textColor="#ff000000"
+                android:typeface="sans" />
+
+            <Button
+                android:id="@+id/btn_Preview"
+                android:layout_width="80dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_User"
+                android:layout_toRightOf="@+id/btn_Login"
+                android:text="@string/preview"
+                android:textColor="#ff000000"
+                android:typeface="sans" />
+
+            <Button
+                android:id="@+id/btn_Record"
+                android:layout_width="80dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_Psd"
+                android:layout_toRightOf="@+id/btn_Preview"
+                android:text="@string/record"
+                android:textColor="#ff000000"
+                android:typeface="sans" />
+
+            <TextView
+                android:id="@+id/TV_IP1"
+                android:layout_width="50dip"
+                android:layout_height="40dip"
+                android:layout_marginTop="200dp"
+                android:layout_below="@+id/btn_Login"
+                android:gravity="center"
+                android:text="@string/ip"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/EDT_IPAddr1"
+                android:layout_width="150dip"
+                android:layout_height="40dip"
+                android:layout_marginTop="200dp"
+                android:layout_below="@+id/btn_Login"
+                android:layout_toRightOf="@+id/TV_IP1"
+                android:gravity="center"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/TV_Port1"
+                android:layout_width="50dip"
+                android:layout_height="40dip"
+                android:layout_marginTop="200dp"
+                android:layout_toRightOf="@+id/EDT_IPAddr1"
+                android:layout_below="@+id/btn_Login"
+                android:gravity="center"
+                android:text="@string/port"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/EDT_Port1"
+                android:layout_width="80dip"
+                android:layout_height="40dip"
+                android:layout_marginTop="200dp"
+                android:layout_toRightOf="@+id/TV_Port1"
+                android:layout_below="@+id/btn_Login"
+                android:gravity="center"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/TV_User1"
+                android:layout_width="60dip"
+                android:layout_height="40dip"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/TV_IP1"
+                android:gravity="center"
+                android:text="@string/user"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/EDT_User1"
+                android:layout_width="120dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_IP1"
+                android:layout_toRightOf="@+id/TV_User1"
+                android:gravity="center"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/TV_Psd1"
+                android:layout_width="50dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_IP1"
+                android:layout_toRightOf="@+id/EDT_User1"
+                android:gravity="center"
+                android:text="@string/psd"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/EDT_Psd1"
+                android:layout_width="120dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_IP1"
+                android:layout_toRightOf="@+id/TV_Psd1"
+                android:inputType="textPassword"
+                android:gravity="center"
+                android:text="" />
+
+            <Button
+                android:id="@+id/btn_Login1"
+                android:layout_width="80dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_User1"
+                android:text="@string/Login"
+                android:textColor="#ff000000"
+                android:typeface="sans" />
+            <Button
+                android:id="@+id/btn_Preview1"
+                android:layout_width="80dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_User1"
+                android:layout_toRightOf="@+id/btn_Login1"
+                android:text="@string/preview"
+                android:textColor="#ff000000"
+                android:typeface="sans" />
+            <Button
+                android:id="@+id/btn_Record1"
+                android:layout_width="80dip"
+                android:layout_height="40dip"
+                android:layout_below="@+id/TV_Psd1"
+                android:layout_toRightOf="@+id/btn_Preview1"
+                android:text="@string/record"
+                android:textColor="#ff000000"
+                android:typeface="sans" />
+
+        </RelativeLayout>
+</LinearLayout>

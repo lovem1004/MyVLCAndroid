@@ -87,6 +87,7 @@ import org.videolan.vlc.gui.preferences.PreferencesFragment;
 import org.videolan.vlc.gui.video.VideoGridFragment;
 import org.videolan.vlc.gui.video.VideoListAdapter;
 import org.videolan.vlc.gui.view.HackyDrawerLayout;
+import org.videolan.vlc.hk.DemoActivity;
 import org.videolan.vlc.interfaces.IHistory;
 import org.videolan.vlc.interfaces.IRefreshable;
 import org.videolan.vlc.interfaces.ISortable;
@@ -904,8 +905,11 @@ public class MainActivity extends AudioPlayerContainerActivity implements Filter
                         mDrawerLayout.closeDrawer(mNavigationView);
                         return true;
                     }
+                    break;
                 case R.id.nav_ipcamera:
+                    startActivity(new Intent(this, DemoActivity.class));
                     Log.e(TAG, "ipcamera been clicked");
+                    break;
                 default:
                 /* Slide down the audio player */
                     slideDownAudioPlayer();
