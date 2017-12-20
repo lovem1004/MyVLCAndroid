@@ -728,7 +728,6 @@ public class VideoPlayerActivity extends AppCompatActivity implements IVLCVout.C
 
     @Override
     protected void onDestroy() {
-        Log.d(TAG,"david1214 onDestroy.........");
         super.onDestroy();
         if (mReceiver != null)
             unregisterReceiver(mReceiver);

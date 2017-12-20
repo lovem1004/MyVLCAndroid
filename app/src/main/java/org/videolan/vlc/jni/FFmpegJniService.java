@@ -42,6 +42,9 @@ public class FFmpegJniService extends Service {
 
     private static final String TAG = "FFmpegJniService";
     private static boolean hasThread = false;
+    private static int timeCount = 0;
+    private long h264FileSize = 0;
+    private long h264FileSize_second = 0;
 
     public static int getNumbers(String content) {
         Pattern pattern = Pattern.compile("\\d+");
@@ -50,6 +53,101 @@ public class FFmpegJniService extends Service {
             return Integer.parseInt(matcher.group(0));
         }
         return -1;
+    }
+
+    public boolean hasH264File() {
+        String dir = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File file = new File(dir);
+        if (file.exists()) {
+            LinkedList<File> list = new LinkedList<File>();
+            File[] files = file.listFiles();
+            for (File file2 : files) {
+                if (file2.isDirectory()) {
+                    continue;
+                } else {
+                    if (file2.toString().contains(".h264")) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public void moveH264File(String dir) {
+        String dir_tmp = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File file = new File(dir_tmp);
+        if (file.exists()) {
+            LinkedList<File> list = new LinkedList<File>();
+            File[] files = file.listFiles();
+            for (File file2 : files) {
+                if (file2.isDirectory()) {
+                    continue;
+                } else {
+                    if (file2.toString().contains(".h264")) {
+                        try {
+                            String cmd = "mv " + file2.toString() + " " + dir;
+                            Runtime.getRuntime().exec(cmd);
+                            Log.e(TAG, "david1218 h264 cmd = " + cmd);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean hasAacFile() {
+        String dir = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File file = new File(dir);
+        if (file.exists()) {
+            LinkedList<File> list = new LinkedList<File>();
+            File[] files = file.listFiles();
+            for (File file2 : files) {
+                if (file2.isDirectory()) {
+                    continue;
+                } else {
+                    if (file2.toString().contains(".aac")) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public void moveAacFile(String dir) {
+        String dir_tmp = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File file = new File(dir_tmp);
+        if (file.exists()) {
+            LinkedList<File> list = new LinkedList<File>();
+            File[] files = file.listFiles();
+            for (File file2 : files) {
+                if (file2.isDirectory()) {
+                    continue;
+                } else {
+                    if (file2.toString().contains(".aac")) {
+                        try {
+                            String cmd = "mv " + file2.toString() + " " + dir;
+                            Runtime.getRuntime().exec(cmd);
+                            Log.e(TAG, "david1218 aac cmd = " + cmd);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static int getNumbers1(String str) {
+        char[] chr2 = new char[20];
+        str.getChars(20,str.length(),chr2,0);
+        String str_result = new String(chr2);
+        return getNumbers(str_result);
     }
 
     public void sort_list(ArrayList<String> list) {
@@ -140,9 +238,37 @@ public class FFmpegJniService extends Service {
         return outputName;
     }
 
+    private void mvOldH264AndAacFile() {
+        if (!hasH264File() && !hasAacFile())
+            return;
+        Time t=new Time();
+        t.setToNow();
+        int year=t.year;
+        int month=t.month +1;
+        int day=t.monthDay;
+        int hour=t.hour;
+        int minute=t.minute;
+        int second=t.second;
+        //Log.i(TAG, ""+year+month+day+hour+minute+second);
+        String dir=Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+year+month+day+hour+minute+second;
+        String cmd1 = "mkdir " + dir;
+        try {
+            Runtime.getRuntime().exec(cmd1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        moveH264File(dir);
+        moveAacFile(dir);
+
+    }
+
     public void getMp4FromFfmpeg() {
         if (hasThread)
             return;
+
+        mvOldH264AndAacFile();
+
         new Thread(new Runnable() {
             private ArrayList<String> h264FileNames = new ArrayList<String>();
             private ArrayList<String> aacFileNames = new ArrayList<String>();
@@ -166,41 +292,158 @@ public class FFmpegJniService extends Service {
                     aacFileNames_second.clear();
                     traverseFolder(dir, h264FileNames, aacFileNames, h264FileNames_second, aacFileNames_second);
 
-                    if (!h264FileNames.isEmpty()) {
-                        for (int i = 0; i < h264FileNames.size(); i++) {
-                            String name = h264FileNames.get(i);
-                            //Log.e(TAG, "h264FileNames[" + i + "]" + "= [" + name + "]");
+                    if (!h264FileNames.isEmpty() && h264FileNames.size() > 1 && !aacFileNames.isEmpty() && aacFileNames.size() > 1) {
+                        for(int i=0; i<h264FileNames.size()-1; i++){
+                            boolean hasMatchAacFile = false;
+                            String h264 = h264FileNames.get(i);
+                            String aac = aacFileNames.get(i);
+                            Log.e(TAG, "david1218 h264 file = " + h264);
+                            Log.e(TAG, "david1218 aac file = " + aac);
+                            if (getNumbers1(h264) != getNumbers1(aac)) {
+                                for (int j = 0; j < aacFileNames.size()-1; j++) {
+                                    if (getNumbers1(h264) == (getNumbers1(aacFileNames.get(j)))) {
+                                        aac = aacFileNames.get(j);
+                                        hasMatchAacFile = true;
+                                        Log.e(TAG, "david1218 h264 equal aac and will break loop");
+                                        break;
+                                    }
+                                }
+                            } else {
+                                hasMatchAacFile = true;
+                            }
+
+                            Log.e(TAG, "david1218 1111111111111111111111");
+                            if (!hasMatchAacFile)
+                                continue;
+
+                            Log.e(TAG, "david1218 2222222222222222222222");
+                            commands[0] = "ffmpeg";
+                            commands[1] = "-i";
+                            commands[2] = aac;
+                            commands[3] = "-i";
+                            commands[4] = h264;
+                            commands[5] = "-map";
+                            commands[6] = "0:0";
+                            commands[7] = "-map";
+                            commands[8] = "1:0";
+                            commands[9] = getOutputFileName();
+                            Log.e(TAG, "call FFmpegJni.run(commands) begin");
+                            int result = FFmpegJni.run(commands);
+                            Log.e(TAG, "call FFmpegJni.run(commands) end");
+                            try {
+                                //Log.e(TAG, "will delete the aac file and h264 file");
+                                Runtime.getRuntime().exec("rm " + aac + " " + h264);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
 
-                    if (!aacFileNames.isEmpty()) {
-                        for (int i = 0; i < aacFileNames.size(); i++) {
-                            String name = aacFileNames.get(i);
-                            //Log.e(TAG, "aacFileNames[" + i + "]" + "= [" + name + "]");
+                    if (!h264FileNames_second.isEmpty() && h264FileNames_second.size() > 1 && !aacFileNames_second.isEmpty() && aacFileNames_second.size() > 1) {
+                        for(int i=0; i<h264FileNames_second.size()-1; i++) {
+                            boolean hasMatchAacFile_second = false;
+                            String h264_second = h264FileNames_second.get(i);
+                            String aac_second = aacFileNames_second.get(i);
+                            if (getNumbers1(h264_second) != getNumbers1(aac_second)) {
+                                for (int j = 0; j < aacFileNames_second.size()-1; j++) {
+                                    if (getNumbers1(h264_second) == (getNumbers1(aacFileNames_second.get(j)))) {
+                                        aac_second = aacFileNames_second.get(j);
+                                        hasMatchAacFile_second = true;
+                                        break;
+                                    }
+                                }
+                            } else {
+                                hasMatchAacFile_second = true;
+                            }
+
+                            if (!hasMatchAacFile_second)
+                                continue;
+
+                            commands[0] = "ffmpeg";
+                            commands[1] = "-i";
+                            commands[2] = aac_second;
+                            commands[3] = "-i";
+                            commands[4] = h264_second;
+                            commands[5] = "-map";
+                            commands[6] = "0:0";
+                            commands[7] = "-map";
+                            commands[8] = "1:0";
+                            commands[9] = getOutputFileName_second();
+                            Log.e(TAG, "call second FFmpegJni.run(commands) begin");
+                            int result = FFmpegJni.run(commands);
+                            Log.e(TAG, "call second FFmpegJni.run(commands) end");
+                            try {
+                                //Log.e(TAG, "second will delete the aac file and h264 file");
+                                Runtime.getRuntime().exec("rm " + aac_second + " " + h264_second);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
 
-                    if (!h264FileNames_second.isEmpty()) {
-                        for (int i = 0; i < h264FileNames_second.size(); i++) {
-                            String name = h264FileNames_second.get(i);
-                            //Log.e(TAG, "h264FileNames_second[" + i + "]" + "= [" + name + "]");
+                    if (!h264FileNames_second.isEmpty() && 1 == h264FileNames_second.size() && !h264FileNames.isEmpty() && 1 == h264FileNames.size()) {
+                        File h264 = new File(h264FileNames.get(0));
+                        File h264_second = new File(h264FileNames_second.get(0));
+                        if (0 == h264FileSize)
+                            h264FileSize = h264.length();
+
+                        if (0 == h264FileSize_second)
+                        h264FileSize_second = h264_second.length();
+
+                        if (timeCount > 30)
+                            break;
+                        if (h264FileSize == h264.length() && h264FileSize_second == h264_second.length()) {
+                            timeCount++;
+                        } else {
+                            h264FileSize = 0;
+                            h264FileSize_second = 0;
+                            timeCount = 0;
                         }
+                    } else {
+                        h264FileSize = 0;
+                        h264FileSize_second = 0;
+                        timeCount = 0;
                     }
 
-                    Log.e(TAG, "aacFileNames_second.size() = " + aacFileNames_second.size());
-                    if (!aacFileNames_second.isEmpty()) {
-                        for (int i = 0; i < aacFileNames_second.size(); i++) {
-                            String name = aacFileNames_second.get(i);
-                            //Log.e(TAG, "aacFileNames_second[" + i + "]" + "= [" + name + "]");
-                        }
-                    }
+                }
 
-                    if (!h264FileNames.isEmpty() && h264FileNames.size() > 1) {
+                //last to merge the mp4 file
+                h264FileNames.clear();
+                aacFileNames.clear();
+                h264FileNames_second.clear();
+                aacFileNames_second.clear();
+
+                traverseFolder(dir, h264FileNames, aacFileNames, h264FileNames_second, aacFileNames_second);
+
+                if (!h264FileNames.isEmpty() && !aacFileNames.isEmpty()) {
+                    for(int i=0; i<h264FileNames.size(); i++){
+                        boolean hasMatchAacFile = false;
+                        String h264 = h264FileNames.get(i);
+                        String aac = aacFileNames.get(i);
+
+                        if (getNumbers1(h264) != getNumbers1(aac)) {
+                            for (int j = 0; j < aacFileNames.size(); j++) {
+                                if (getNumbers1(h264) == (getNumbers1(aacFileNames.get(j)))) {
+                                    aac = aacFileNames.get(j);
+                                    hasMatchAacFile = true;
+                                    Log.e(TAG, "david1218 h264 equal aac and will break loop");
+                                    break;
+                                }
+                            }
+                        } else {
+                            hasMatchAacFile = true;
+                        }
+
+                        Log.e(TAG, "david1218 1111111111111111111111");
+                        if (!hasMatchAacFile)
+                            continue;
+
+                        Log.e(TAG, "david1218 2222222222222222222222");
                         commands[0] = "ffmpeg";
                         commands[1] = "-i";
-                        commands[2] = aacFileNames.get(0);
+                        commands[2] = aac;
                         commands[3] = "-i";
-                        commands[4] = h264FileNames.get(0);
+                        commands[4] = h264;
                         commands[5] = "-map";
                         commands[6] = "0:0";
                         commands[7] = "-map";
@@ -211,18 +454,38 @@ public class FFmpegJniService extends Service {
                         Log.e(TAG, "call FFmpegJni.run(commands) end");
                         try {
                             //Log.e(TAG, "will delete the aac file and h264 file");
-                            Runtime.getRuntime().exec("rm " + aacFileNames.get(0) + " " + h264FileNames.get(0));
+                            Runtime.getRuntime().exec("rm " + aac + " " + h264);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
+                }
 
-                    if (!h264FileNames_second.isEmpty() && h264FileNames_second.size() > 1) {
+                if (!h264FileNames_second.isEmpty() && !aacFileNames_second.isEmpty()) {
+                    for(int i=0; i<h264FileNames_second.size(); i++) {
+                        boolean hasMatchAacFile_second = false;
+                        String h264_second = h264FileNames_second.get(i);
+                        String aac_second = aacFileNames_second.get(i);
+                        if (getNumbers1(h264_second) != getNumbers1(aac_second)) {
+                            for (int j = 0; j < aacFileNames_second.size(); j++) {
+                                if (getNumbers1(h264_second) == (getNumbers1(aacFileNames_second.get(j)))) {
+                                    aac_second = aacFileNames_second.get(j);
+                                    hasMatchAacFile_second = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            hasMatchAacFile_second = true;
+                        }
+
+                        if (!hasMatchAacFile_second)
+                            continue;
+
                         commands[0] = "ffmpeg";
                         commands[1] = "-i";
-                        commands[2] = aacFileNames_second.get(0);
+                        commands[2] = aac_second;
                         commands[3] = "-i";
-                        commands[4] = h264FileNames_second.get(0);
+                        commands[4] = h264_second;
                         commands[5] = "-map";
                         commands[6] = "0:0";
                         commands[7] = "-map";
@@ -233,19 +496,20 @@ public class FFmpegJniService extends Service {
                         Log.e(TAG, "call second FFmpegJni.run(commands) end");
                         try {
                             //Log.e(TAG, "second will delete the aac file and h264 file");
-                            Runtime.getRuntime().exec("rm " + aacFileNames_second.get(0) + " " + h264FileNames_second.get(0));
+                            Runtime.getRuntime().exec("rm " + aac_second + " " + h264_second);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
+
             }
         }).start();
     }
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e(TAG, "onCreate");
+        Log.e(TAG, "david1218 onCreate");
         getMp4FromFfmpeg();
     }
 
@@ -253,14 +517,14 @@ public class FFmpegJniService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null)
             return START_STICKY;
-        Log.e(TAG, "onStartCommand");
+        Log.e(TAG, "david1218 onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"onDestroy......");
+        Log.d(TAG,"david1218 onDestroy......");
     }
 
     @Override
