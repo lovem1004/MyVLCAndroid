@@ -115,6 +115,10 @@ dependencies {
     compile 'com.android.support:leanback-v17:24.1.1'
     compile 'com.android.support:preference-leanback-v17:24.1.1'
     compile files("libs/axmlrpc.jar")
+    compile files("libs/AudioEngineSDK.jar")
+    compile files("libs/HCNetSDK.jar")
+    compile files("libs/jna.jar")
+    compile files("libs/PlayerSDK.jar")
     testCompile 'junit:junit:4.12'
 }
 

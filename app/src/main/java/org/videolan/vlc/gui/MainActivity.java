@@ -898,7 +898,6 @@ public class MainActivity extends AudioPlayerContainerActivity implements Filter
                     startActivityForResult(new Intent(this, PreferencesActivity.class), ACTIVITY_RESULT_PREFERENCES);
                     break;
                 case R.id.nav_directories:
-                    Log.e(TAG, "ruirui nav_directories");
                     if (TextUtils.equals(BuildConfig.FLAVOR_target, "chrome")) {
                         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                         intent.setType("audio/* video/*");

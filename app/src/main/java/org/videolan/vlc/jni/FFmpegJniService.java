@@ -89,7 +89,6 @@ public class FFmpegJniService extends Service {
                         try {
                             String cmd = "mv " + file2.toString() + " " + dir;
                             Runtime.getRuntime().exec(cmd);
-                            Log.e(TAG, "david1218 h264 cmd = " + cmd);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -133,7 +132,7 @@ public class FFmpegJniService extends Service {
                         try {
                             String cmd = "mv " + file2.toString() + " " + dir;
                             Runtime.getRuntime().exec(cmd);
-                            Log.e(TAG, "david1218 aac cmd = " + cmd);
+                            //Log.e(TAG, "david1218 aac cmd = " + cmd);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -297,14 +296,13 @@ public class FFmpegJniService extends Service {
                             boolean hasMatchAacFile = false;
                             String h264 = h264FileNames.get(i);
                             String aac = aacFileNames.get(i);
-                            Log.e(TAG, "david1218 h264 file = " + h264);
-                            Log.e(TAG, "david1218 aac file = " + aac);
+                            //Log.e(TAG, "david1218 h264 file = " + h264);
+                            //Log.e(TAG, "david1218 aac file = " + aac);
                             if (getNumbers1(h264) != getNumbers1(aac)) {
                                 for (int j = 0; j < aacFileNames.size()-1; j++) {
                                     if (getNumbers1(h264) == (getNumbers1(aacFileNames.get(j)))) {
                                         aac = aacFileNames.get(j);
                                         hasMatchAacFile = true;
-                                        Log.e(TAG, "david1218 h264 equal aac and will break loop");
                                         break;
                                     }
                                 }
@@ -312,11 +310,9 @@ public class FFmpegJniService extends Service {
                                 hasMatchAacFile = true;
                             }
 
-                            Log.e(TAG, "david1218 1111111111111111111111");
                             if (!hasMatchAacFile)
                                 continue;
 
-                            Log.e(TAG, "david1218 2222222222222222222222");
                             commands[0] = "ffmpeg";
                             commands[1] = "-i";
                             commands[2] = aac;
@@ -331,7 +327,6 @@ public class FFmpegJniService extends Service {
                             int result = FFmpegJni.run(commands);
                             Log.e(TAG, "call FFmpegJni.run(commands) end");
                             try {
-                                //Log.e(TAG, "will delete the aac file and h264 file");
                                 Runtime.getRuntime().exec("rm " + aac + " " + h264);
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -373,7 +368,6 @@ public class FFmpegJniService extends Service {
                             int result = FFmpegJni.run(commands);
                             Log.e(TAG, "call second FFmpegJni.run(commands) end");
                             try {
-                                //Log.e(TAG, "second will delete the aac file and h264 file");
                                 Runtime.getRuntime().exec("rm " + aac_second + " " + h264_second);
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -426,7 +420,6 @@ public class FFmpegJniService extends Service {
                                 if (getNumbers1(h264) == (getNumbers1(aacFileNames.get(j)))) {
                                     aac = aacFileNames.get(j);
                                     hasMatchAacFile = true;
-                                    Log.e(TAG, "david1218 h264 equal aac and will break loop");
                                     break;
                                 }
                             }
@@ -434,11 +427,9 @@ public class FFmpegJniService extends Service {
                             hasMatchAacFile = true;
                         }
 
-                        Log.e(TAG, "david1218 1111111111111111111111");
                         if (!hasMatchAacFile)
                             continue;
 
-                        Log.e(TAG, "david1218 2222222222222222222222");
                         commands[0] = "ffmpeg";
                         commands[1] = "-i";
                         commands[2] = aac;
@@ -453,7 +444,6 @@ public class FFmpegJniService extends Service {
                         int result = FFmpegJni.run(commands);
                         Log.e(TAG, "call FFmpegJni.run(commands) end");
                         try {
-                            //Log.e(TAG, "will delete the aac file and h264 file");
                             Runtime.getRuntime().exec("rm " + aac + " " + h264);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -509,7 +499,7 @@ public class FFmpegJniService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e(TAG, "david1218 onCreate");
+        Log.e(TAG, "onCreate");
         getMp4FromFfmpeg();
     }
 
@@ -517,14 +507,14 @@ public class FFmpegJniService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null)
             return START_STICKY;
-        Log.e(TAG, "david1218 onStartCommand");
+        Log.e(TAG, "onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"david1218 onDestroy......");
+        Log.d(TAG,"onDestroy......");
     }
 
     @Override
